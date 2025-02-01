@@ -18,29 +18,13 @@ func main() {
 
 	lexer := NewLexer(jsonFile)
 
-	var lastToken Token
+	// parser
 
 	for {
-		pos, tok, _ := lexer.Lex()
-		if pos.line == 1 && pos.column == 1 {
-			if tok != OpenBrace {
-				fmt.Println(tok, OpenBrace)
-				fmt.Println("Invalid 1")
-				os.Exit(1)
-			}
-		}
+		_, tok, val := lexer.Lex()
+		fmt.Println(val)
 		if tok == EOF {
-			if lastToken == CloseBrace {
-				fmt.Println("Valid")
-				os.Exit(0)
-			} else {
-				fmt.Println("Invalid 2")
-				os.Exit(1)
-			}
+			break
 		}
-
-		lastToken = tok
 	}
-
-	os.Exit(0)
 }

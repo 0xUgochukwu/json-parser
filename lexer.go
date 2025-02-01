@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 )
 
@@ -11,6 +12,9 @@ const (
 	EOF = iota
 	OpenBrace
 	CloseBrace
+	String
+	Colon
+	Comma
 )
 
 type Position struct {
@@ -35,6 +39,27 @@ func (l *Lexer) ResetPosition() {
 	l.pos.column = 0
 }
 
+func (l *Lexer) ReadString() string {
+	var s string
+
+	for {
+		r, _, err := l.reader.ReadRune()
+		if err != nil {
+			if err == io.EOF {
+				panic("EOF in string")
+			}
+
+		}
+		l.pos.column++
+		if r == '"' {
+			break
+		}
+		s += string(r)
+	}
+
+	return s
+}
+
 func (l *Lexer) Lex() (Position, Token, string) {
 	for {
 		r, _, err := l.reader.ReadRune()
@@ -53,6 +78,16 @@ func (l *Lexer) Lex() (Position, Token, string) {
 			return l.pos, OpenBrace, "{"
 		case '}':
 			return l.pos, CloseBrace, "}"
+		case '"':
+			return l.pos, String, l.ReadString()
+		case ':':
+			return l.pos, Colon, ":"
+		case ',':
+			return l.pos, Comma, ","
+		default:
+			if r != ' ' && r != '\t' && r != '\r' {
+				panic(fmt.Sprintf("Unexpected character: %c", r))
+			}
 		}
 
 	}
