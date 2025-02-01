@@ -83,6 +83,7 @@ func (l *Lexer) LexValue() string {
 }
 
 // use this to lex arrays and then consider pasrsing objects to itself
+// different types can be in arrays
 func (l *Lexer) LexArray() {}
 
 func (l *Lexer) NextToken() (Position, Token, string) {
